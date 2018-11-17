@@ -1,4 +1,4 @@
-global.jcode1 = {
+const jcode1 = {
     type: 'Program',
     body: [
         {
