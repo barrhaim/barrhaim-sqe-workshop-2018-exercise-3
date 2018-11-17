@@ -58,47 +58,22 @@ describe('Test while statement', () => {
 
 describe('Test if statement', () => {
     it('parse if empty body', () => {
-        let res = [
-            new Trow('1', 'if statement', '', 'arr[i]&gt11', '').toHtml()
-        ].join('');
+        let res = [new Trow('1', 'if statement', '', 'arr[i]&gt11', '').toHtml()].join('');
         assert.equal(res, pipline('if(arr[i] > 11)\n{}'));
     });
-
     it('parse if with body', () => {
         let res = [
-            new Trow('1', 'if statement', '', 'arr[i]&gt11', '').toHtml(),
-            new Trow('2', 'assignment expression', 'x', '', 'x+1').toHtml(),
-            new Trow('3', 'assignment expression', 'p', '', 'k').toHtml()
-        ].join('');
+            new Trow('1', 'if statement', '', 'arr[i]&gt11', '').toHtml(), new Trow('2', 'assignment expression', 'x', '', 'x+1').toHtml(), new Trow('3', 'assignment expression', 'p', '', 'k').toHtml()].join('');
         assert.equal(pipline('if(arr[i] > 11)\n{x = x + 1;\np=k;}'), res);
     });
     it('parse if else', () => {
-        let res = [
-            new Trow('1', 'if statement', '', 'arr[i]&gt11', '').toHtml(),
-            new Trow('2', 'assignment expression', 'x', '', 'x+1').toHtml(),
-            new Trow('3', 'else statement', '', '', '').toHtml(),
-            new Trow('4', 'assignment expression', 'a[l]', '', '1').toHtml()
-        ].join('');
-        assert.equal(
-            pipline('if(arr[i] > 11)\n{x = x + 1;}\nelse\n{a[l] = 1;}'),
-            res
-        );
+        let res = [new Trow('1', 'if statement', '', 'arr[i]&gt11', '').toHtml(), new Trow('2', 'assignment expression', 'x', '', 'x+1').toHtml(), new Trow('3', 'else statement', '', '', '').toHtml(), new Trow('4', 'assignment expression', 'a[l]', '', '1').toHtml()].join('');
+        assert.equal(pipline('if(arr[i] > 11)\n{x = x + 1;}\nelse\n{a[l] = 1;}'), res);
     });
     it('parse if else if else', () => {
-        let res = [
-            new Trow('1', 'if statement', '', 'arr[i]&gt11', '').toHtml(),
-            new Trow('2', 'assignment expression', 'x', '', 'x+1').toHtml(),
-            new Trow('3', 'else if statement', '', 'k', '').toHtml(),
-            new Trow('3', 'assignment expression', 'p', '', 'p+2').toHtml(),
-            new Trow('4', 'else statement', '', '', '').toHtml(),
-            new Trow('5', 'assignment expression', 'a[l]', '', '1').toHtml()
+        let res = [new Trow('1', 'if statement', '', 'arr[i]&gt11', '').toHtml(), new Trow('2', 'assignment expression', 'x', '', 'x+1').toHtml(), new Trow('3', 'else if statement', '', 'k', '').toHtml(), new Trow('3', 'assignment expression', 'p', '', 'p+2').toHtml(), new Trow('4', 'else statement', '', '', '').toHtml(), new Trow('5', 'assignment expression', 'a[l]', '', '1').toHtml()
         ].join('');
-        assert.equal(
-            pipline(
-                'if(arr[i] > 11)\n{x = x + 1}\nelse if(k){p=p+2}\nelse\n{a[l] = 1}'
-            ),
-            res
-        );
+        assert.equal(pipline('if(arr[i] > 11)\n{x = x + 1}\nelse if(k){p=p+2}\nelse\n{a[l] = 1}'), res);
     });
 });
 
