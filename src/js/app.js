@@ -1,10 +1,20 @@
 import $ from 'jquery';
-import {parseCode} from './code-analyzer';
-
+import {makegraph} from './graph-gen';
+import Viz from 'viz.js';
+import {Module, render} from 'viz.js/full.render.js';
 $(document).ready(function () {
     $('#codeSubmissionButton').click(() => {
-        let codeToParse = $('#codePlaceholder').val();
-        let parsedCode = parseCode(codeToParse);
-        $('#parsedCode').val(JSON.stringify(parsedCode, null, 2));
+        let codeToParse = $('#codePlaceholder').val(); //plain text
+        let inputs = $('#inputs').val();
+        var dot = makegraph(codeToParse,inputs);
+        const viz = new Viz({Module, render});
+
+        viz.renderSVGElement(dot)
+            .then(function (element) {
+                $('#output').innerHTML = '';
+                $('#output').append(element);
+            });
     });
+
 });
+
