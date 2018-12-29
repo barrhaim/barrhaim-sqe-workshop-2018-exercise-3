@@ -12,7 +12,6 @@ function makegraph(source,inputs){
     let myformat = my_dot_format(cfg);
     let dot = esgraph.dot(cfg, { counter: 0, source: source });
     dot = `digraph cfg { forcelabels=true\n ${myformat} }`;
-
     return dot;
 }
 
@@ -83,8 +82,23 @@ function color_nodes(cfg,env){
     rec_coloring(gnodes[0],env);
 }
 
+//FINITE VERSION
+// function rec_coloring(node, env) {
+//     if (node && node.color === undefined){
+//         if(node.true && node.false){
+//             handle_condition(node,env);
+//         }
+//         else{
+//             node.color='green';
+//             rec_coloring(node.normal,env+node.label);
+//         }
+//     }
+//
+// }
+
+//ENDLESS IN SOME CASES
 function rec_coloring(node, env) {
-    if (node && node.color === undefined){
+    if (node){
         if(node.true && node.false){
             handle_condition(node,env);
         }
@@ -95,7 +109,6 @@ function rec_coloring(node, env) {
     }
 
 }
-
 function handle_condition(node,env){
     node.color='green';
 
@@ -145,7 +158,7 @@ function del_exit_node(gnodes) {
 function lables_and_exceptions(gnodes) {
     gnodes.forEach(x => {
         if (x.astNode !== undefined) {
-            x.label = escodegen.generate(x.astNode);
+            x.label = escodegen.generate(x.astNode)+';';
             delete x.exception;
         }
     });
