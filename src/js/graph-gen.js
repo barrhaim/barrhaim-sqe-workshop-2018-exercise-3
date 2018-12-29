@@ -5,18 +5,79 @@ import * as escodegen from 'escodegen';
 function makegraph(source,inputs){
     let ast = esprima.parse(source, { range: true });
     let params = extract_params(ast);
-    let env = make_vars_string(inputs,params)
+    let env = make_vars_string(inputs,params);
     let cfg = esgraph(handle_ast(ast));
     handle_cfg(cfg);
     color_nodes(cfg,env);
+    let myformat = my_dot_format(cfg);
     let dot = esgraph.dot(cfg, { counter: 0, source: source });
-    dot = `digraph cfg { forcelabels=true\n ${dot} }`;
+    dot = `digraph cfg { forcelabels=true\n ${myformat} }`;
 
     return dot;
 }
 
 
+function my_dot_format(cfg){
+    let nodes = make_nodes(cfg);
+    let edges = make_edges(cfg);
+    return nodes.concat(edges).join('');
+}
 
+function specify_node(current, i, s) {
+    let temp = `n${i} [label="${current.label}",xlabel="${i}"`;
+    if (current.true && current.false) {
+        temp += ', shape=diamond';
+    }
+    else {
+        temp += ', shape=rectangle';
+    }
+    if (current.color && current.color === 'green') {
+        temp += ', style = filled, fillcolor=green ';
+    }
+    s.push(temp + ']\n');
+}
+
+function make_nodes(cfg){
+    let s=[];
+    let nodes = cfg[2];
+    for(let i = 0 ; i < nodes.length;i++){
+        let current = nodes[i];
+        specify_node(current, i, s);
+    }
+    return s;
+}
+
+function gen_edge(x, nodes, edges) {
+    if (x.true) {
+        let from = 'n' + nodes.indexOf(x);
+        let to = 'n' + nodes.indexOf(x.true);
+        edges.push(`${from} -> ${to} [label="true"]\n`);
+    }
+    if (x.false) {
+        let from = 'n' + nodes.indexOf(x);
+        let to = 'n' + nodes.indexOf(x.false);
+        edges.push(`${from} -> ${to} [label="false"]\n`);
+    }
+    if (x.normal) {
+        let from = 'n' + nodes.indexOf(x);
+        let to = 'n' + nodes.indexOf(x.normal);
+        edges.push(`${from} -> ${to} []\n`);
+    }
+}
+
+function make_edges(cfg){
+    let edges = [];
+    let nodes = cfg[2];
+    nodes.forEach(x=>{
+        gen_edge(x, nodes, edges);
+
+    });
+    return edges;
+}
+
+
+
+///////////////////////////
 function color_nodes(cfg,env){
     let gnodes = cfg[2];
     rec_coloring(gnodes[0],env);
@@ -36,12 +97,12 @@ function rec_coloring(node, env) {
 }
 
 function handle_condition(node,env){
+    node.color='green';
+
     if(eval(env+node.label)){
-        node.color='green';
         rec_coloring(node.true,env);
     }
     else{
-        node.color='white';
         rec_coloring(node.false,env);
     }
 }
