@@ -3,6 +3,7 @@ import {makegraph} from './graph-gen';
 import Viz from 'viz.js';
 import {Module, render} from 'viz.js/full.render.js';
 $(document).ready(function () {
+    //triggers
     $('#codeSubmissionButton').click(() => {
         let codeToParse = $('#codePlaceholder').val(); //plain text
         let inputs = $('#inputs').val();
