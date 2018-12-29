@@ -157,10 +157,10 @@ function del_exit_node(gnodes) {
 
 function lables_and_exceptions(gnodes) {
     gnodes.forEach(x => {
-        if (x.astNode !== undefined) {
-            x.label = escodegen.generate(x.astNode)+';';
-            delete x.exception;
-        }
+        // if (x.astNode !== undefined) {
+        x.label = escodegen.generate(x.astNode)+';';
+        delete x.exception;
+        // }
     });
 }
 

@@ -6,7 +6,7 @@ $(document).ready(function () {
     $('#codeSubmissionButton').click(() => {
         let codeToParse = $('#codePlaceholder').val(); //plain text
         let inputs = $('#inputs').val();
-        var dot = makegraph(codeToParse,inputs);
+        var dot = makegraph(codeToParse,'['+inputs+']');
         const viz = new Viz({Module, render});
 
         viz.renderSVGElement(dot)
