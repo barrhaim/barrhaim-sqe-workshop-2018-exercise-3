@@ -8,12 +8,43 @@ function makegraph(source,inputs){
     let env = make_vars_string(inputs,params)
     let cfg = esgraph(handle_ast(ast));
     handle_cfg(cfg);
+    color_nodes(cfg,env);
     let dot = esgraph.dot(cfg, { counter: 0, source: source });
     dot = `digraph cfg { forcelabels=true\n ${dot} }`;
 
     return dot;
 }
 
+
+
+function color_nodes(cfg,env){
+    let gnodes = cfg[2];
+    rec_coloring(gnodes[0],env);
+}
+
+function rec_coloring(node, env) {
+    if (node && node.color === undefined){
+        if(node.true && node.false){
+            handle_condition(node,env);
+        }
+        else{
+            node.color='green';
+            rec_coloring(node.normal,env+node.label);
+        }
+    }
+
+}
+
+function handle_condition(node,env){
+    if(eval(env+node.label)){
+        node.color='green';
+        rec_coloring(node.true,env);
+    }
+    else{
+        node.color='white';
+        rec_coloring(node.false,env);
+    }
+}
 function make_vars_string(inputs,params){
     let data = eval(inputs);
     let vs = [];
@@ -72,14 +103,18 @@ function set_label(node) {
     node.label = node.label + '\n' + node.normal.label;
 }
 
+function link_next_node(node) {
+    node.next = node.normal.next;
+    node.normal = node.normal.normal;
+}
+
 function merge(cfg) {
     for (let i = 0; i < cfg.length; i++) {
         let node = cfg[i];
         while (node.normal && node.normal.normal && node.normal.prev.length === 1) {
             cfg.splice(cfg.indexOf(node.normal), 1);
             set_label(node);
-            node.next = node.normal.next;
-            node.normal = node.normal.normal;
+            link_next_node(node);
         }
     }
 }
